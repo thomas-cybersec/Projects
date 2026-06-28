@@ -159,6 +159,8 @@ Expansión del evento en Wazuh para verificar los campos relevantes:
 | 4. Hipótesis descartada | T1550.002 (PtH) | Mencionada en rule 92657 | N/A |
 
 
+## FASE FIINAL SOC
+
 ## Mitigación — cómo contrarrestar este ataque en producción
 
 El laboratorio fue configurado deliberadamente con condiciones favorables al
