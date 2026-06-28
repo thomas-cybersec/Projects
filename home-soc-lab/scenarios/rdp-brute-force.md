@@ -162,7 +162,7 @@ Expansión del evento en Wazuh para verificar los campos relevantes:
 
 ## FASE FINAL SOC
 
-Mitigación — cómo contrarrestar este ataque en producción
+### Mitigación — cómo contrarrestar este ataque en producción
 
 El laboratorio fue configurado deliberadamente con condiciones favorables al
 atacante (NLA deshabilitado, contraseña débil, sin políticas de lockout) para
