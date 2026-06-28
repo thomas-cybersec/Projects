@@ -159,7 +159,135 @@ Expansión del evento en Wazuh para verificar los campos relevantes:
 | 4. Hipótesis descartada | T1550.002 (PtH) | Mencionada en rule 92657 | N/A |
 
 
+## Mitigación — cómo contrarrestar este ataque en producción
+
+El laboratorio fue configurado deliberadamente con condiciones favorables al
+atacante (NLA deshabilitado, contraseña débil, sin políticas de lockout) para
+poder observar la cadena de detección completa. En un entorno productivo,
+ninguna de esas condiciones existiría. Esta sección documenta los controles
+defensivos que habrían frenado o detectado este ataque mucho antes.
+
+### 1. Reducción de superficie de ataque
+
+**No exponer RDP directamente.** El control más efectivo es eliminar el vector
+de acceso. En producción, RDP no debería ser alcanzable directamente desde
+ninguna red no confiable. Las opciones estándar son:
+
+- Acceso vía **VPN** corporativa (el atacante necesita primero credenciales
+  válidas de VPN, idealmente con MFA).
+- Acceso vía **jump host / bastion**, con todas las conexiones RDP centralizadas
+  y auditadas en un único punto.
+- **Just-in-Time access** (JIT): el puerto RDP solo se abre temporalmente
+  cuando un administrador lo solicita y se cierra automáticamente.
+
+En este lab, ATK → DMZ:3389 estaba permitido para simular un atacante con
+acceso a la red interna o RDP expuesto incorrectamente.
+
+### 2. Endurecimiento de la autenticación
+
+**Habilitar Network Level Authentication (NLA).** Obliga al cliente a
+autenticarse *antes* de que se establezca la sesión RDP completa. Esto encarece
+significativamente el brute force porque cada intento requiere completar el
+handshake de autenticación. En el lab fue deshabilitado a propósito.
+
+**Multi-Factor Authentication (MFA).** Soluciones como Duo, Azure MFA o un RADIUS
+con segundo factor convierten un brute force de contraseña en algo
+prácticamente irrelevante: aunque el atacante adivine la contraseña, no puede
+completar el logon sin el segundo factor.
+
+**Política de contraseñas robusta.** Mínimo 14 caracteres, complejidad real
+(no `Password123`), rotación razonable, y validación contra listas de
+contraseñas filtradas conocidas (ej. integración con HaveIBeenPwned).
+
+### 3. Account lockout y throttling
+
+**Account Lockout Policy.** Configurable vía GPO en Windows
+(`Computer Configuration → Policies → Windows Settings → Security Settings →
+Account Policies → Account Lockout Policy`). Valores razonables:
+
+- *Account lockout threshold:* 5 intentos fallidos.
+- *Account lockout duration:* 15 minutos (o manual).
+- *Reset account lockout counter after:* 15 minutos.
+
+En este escenario, sin lockout, Hydra pudo probar 11 contraseñas seguidas sin
+ningún tipo de freno. Con una política básica, el ataque se habría bloqueado
+en el intento 6 y la cuenta habría quedado inutilizable para el atacante.
+
+**Importante:** lockouts agresivos pueden ser un vector de denegación de
+servicio (un atacante bloquea cuentas legítimas a propósito). El balance
+correcto es lockout temporal corto + alertas tempranas al SOC.
+
+### 4. Reducción del riesgo de cuentas comprometidas
+
+**Principio de menor privilegio.** El usuario comprometido (`soporte`) era una
+cuenta local. En producción, las cuentas con acceso RDP deberían:
+
+- No tener privilegios de administrador local salvo justificación explícita.
+- Estar gestionadas centralmente (Active Directory) para visibilidad completa.
+- Pertenecer a grupos auditados — no acceso RDP genérico.
+
+**Cuentas dedicadas para administración remota.** Separar cuentas de uso
+diario de cuentas administrativas, idealmente con tiered access (modelo de
+Microsoft Tier 0/1/2). Una cuenta admin nunca debería usarse para tareas
+cotidianas.
+
+### 5. Detección y respuesta proactiva
+
+**Alertas tempranas en el SOC.** El brute force fue detectado *después* de
+múltiples intentos fallidos. En producción, las reglas deberían disparar más
+agresivamente:
+
+- Alerta a nivel medio con 3-5 fallos del mismo usuario en menos de 1 minuto.
+- Alerta crítica con 10+ fallos o fallos desde múltiples IPs origen.
+- Correlación: brute force seguido de logon exitoso = credencial comprometida
+  confirmada (regla custom mencionada en el gap identificado).
+
+**Playbook de respuesta.** Un SOC maduro tiene un procedimiento documentado:
+identificar IP origen → bloquearla en el firewall → resetear la contraseña
+del usuario target → revisar accesos posteriores del usuario en busca de
+movimiento lateral.
+
+**Inteligencia de amenazas.** IPs origen de brute force conocidas (ej. desde
+feeds de threat intel) bloqueadas preventivamente. Wazuh soporta integración
+con feeds vía CDB lists.
+
+### 6. Reducción de la superficie de la cuenta comprometida
+
+Aunque el atacante haya conseguido la contraseña, ciertos controles limitan lo
+que puede hacer una vez adentro:
+
+- **Logon time restrictions.** Si la cuenta `soporte` solo debería loguearse
+  entre 9-18 horas, un logon a las 3 AM dispara alerta.
+- **Restricción por IP/máquina origen.** GPO o políticas que limiten desde
+  dónde puede iniciar sesión cada cuenta.
+- **Conditional Access** (en entornos cloud-integrated): bloquear logins
+  desde geografías inesperadas o dispositivos no conocidos.
+
+### Tabla resumen: controles aplicables
+
+| Capa | Control | Efecto sobre este ataque |
+|---|---|---|
+| Red | RDP solo vía VPN/jump host | El atacante no puede ni intentar el ataque |
+| Red | Firewall + GeoIP blocking | Filtra orígenes no esperados |
+| Autenticación | MFA | El brute force se vuelve irrelevante |
+| Autenticación | NLA habilitado | Encarece cada intento |
+| Política | Account lockout | Detiene el ataque tras N fallos |
+| Política | Contraseñas robustas | `Password123` no existiría |
+| Identidad | Menor privilegio | Limita el impacto del compromiso |
+| Detección | Alertas tempranas (SIEM) | El SOC interviene antes |
+| Respuesta | Playbook documentado | Acción consistente y rápida |
+| Identidad | Logon restrictions | Detecta uso anómalo de la cuenta |
+
+### Lección de defensa en profundidad
+
+Ningún control individual es suficiente. Un atacante real puede evadir
+cualquiera de ellos: roba MFA con phishing, encuentra cuentas sin lockout,
+descubre el jump host. **La defensa efectiva combina varios controles** en
+capas, de modo que el atacante deba evadir todos para tener éxito. Este es
+el principio de *defense in depth* aplicado: cada capa de la tabla anterior
+es independiente, y juntas elevan el costo del ataque exponencialmente.
+
+
 ---
 **Autor:** Thomas  
-**Fecha de ejecución:** 2 de junio de 2026  
 **Entorno:** Home SOC Lab v1 — pfSense / Wazuh / Windows Server / Kali
