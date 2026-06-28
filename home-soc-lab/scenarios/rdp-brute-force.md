@@ -158,10 +158,11 @@ Expansión del evento en Wazuh para verificar los campos relevantes:
 | 3. Initial access exitoso | T1078, T1021.001 | Rule 92657 (Event ID 4624, logonType 10) | 6 |
 | 4. Hipótesis descartada | T1550.002 (PtH) | Mencionada en rule 92657 | N/A |
 
+## 
 
-## FASE FIINAL SOC
+## FASE FINAL SOC
 
-## Mitigación — cómo contrarrestar este ataque en producción
+Mitigación — cómo contrarrestar este ataque en producción
 
 El laboratorio fue configurado deliberadamente con condiciones favorables al
 atacante (NLA deshabilitado, contraseña débil, sin políticas de lockout) para
