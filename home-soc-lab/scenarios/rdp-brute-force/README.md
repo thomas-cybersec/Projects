@@ -47,7 +47,7 @@ Creamos un usuario local llamado soporte con contraseña débil (Password123) me
 
 **3. Verificación de auditoría de logons:**
 ### Validación del usuario en grupo RDP
-![Captura 03](../images/03-rdp-config-windows.png)
+![Captura 01](img/01-rdp-config-windows.png)
 
 Confirmado: "Logon" con "Success and Failure" habilitado. Sin esto, los Event ID 4625 no se generarían y el ataque sería invisible.
 
@@ -73,7 +73,7 @@ hydra -t 2 -V -f -l soporte -P /home/kali/wordlist-lab.txt rdp://192.168.20.10
 
 ### Salida exitosa de Hydra
 
-![Hydra encontrando la credencial](../images/04-hydra-bruteforce-exitose.png)
+![Captura 02](img/02-hydra-bruteforce-exitosa.png)
 
 **Resultado:**
 ```
@@ -98,7 +98,7 @@ Cascada de alertas individuales y una alerta agregada por correlación.
 - Mapean a T1078 y T1531.
 
 ### cascada de logons fallidos
-> ![Dashboard de Wazuh - Cascada de Failed Logons](../images/05-wazuh-cascada-failed-logons.png)
+![Captura 03](img/03-wazuh-cascada-failed-logons.png)
 
 
 **Alerta agregada — Rule 60204 (nivel 10):**
@@ -109,7 +109,7 @@ Cascada de alertas individuales y una alerta agregada por correlación.
 Esta es la detección clave: Wazuh **correlaciona** múltiples fallos del mismo usuario en una ventana temporal corta y genera una alerta de alto nivel. Es la diferencia entre tener logs y tener un SIEM.
 
 ### Alerta de correlación nivel 10 
-![Wazuh - Alerta de correlación de fuerza bruta](../images/06-wazuh-alerta-correlacion-bruteforce.png)
+![Captura 04](img/04-wazuh-alerta-correlacion-bruteforce.png)
 
 #### Fase 2: detección del logon exitoso
 
@@ -126,7 +126,7 @@ no un hash robado. En un incidente real, esta es la línea de razonamiento que e
 
 ### detección del logon exitoso
 
-![Wazuh - Logon exitoso detectado](../images/07-wazuh-logon-exitoso-detectado.png)
+![Captura 05](img/05-wazuh-logon-exitoso-detectado.png)
 
 #### Fase 3: análisis del evento crudo
 
@@ -144,11 +144,11 @@ Expansión del evento en Wazuh para verificar los campos relevantes:
 
 ### detalle del evento crudo
 
-![Wazuh - Detalle del evento en JSON](../images/08-wazuh-evento-detalle.png)
+![Captura 06](img/06-wazuh-evento-detalle.png)
 
 #### Vista panorámica MITRE
 
-![dashboard MITRE ATT&CK](../images/09-wazuh-mitre-dashboard.png)
+![Captura 07](img/07-wazuh-mitre-dashboard.png)
 ### Reconstrucción de la kill chain
 
 | Fase | Técnica MITRE | Evidencia | Nivel Wazuh |
