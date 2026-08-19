@@ -259,8 +259,8 @@ Se desplegó Suricata en pfSense sobre la interfaz REDDMZ en modo IDS (sin bloqu
 para no interrumpir el C2 en observación), con los rulesets ET Open y ABUSE.ch SSL
 Blacklist activados.
 
-Suricata no generó ninguna alerta del C2.** El canal viaja cifrado (HTTPS/TLS). Por eso
-mismo, en un entorno real, al visibilidad se recuperaría con **SSL/TLS Inspection**) 
+Suricata no generó ninguna alerta del C2.** El canal viaja cifrado (HTTPS/TLS).
+En un entorno real, la visibilidad se recuperaría con **SSL/TLS Inspection**) 
 mediante un NGFW o proxy de intercepción, con sus trade-offs
 
 *[captura: `img/04-suricata-alerts.png` — alertas de Suricata sin el beacon entre ellas]*
