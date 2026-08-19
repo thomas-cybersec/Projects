@@ -202,6 +202,8 @@ transfirió al WinSrv por HTTP desde la infraestructura del atacante
 implante Sliver sin ofuscación adicional fue así detectado por la capa endpoint
 **antes de ejecutarse**, con la versión de firmas fijada en la Fase 1.
 
+![detección Trojan:Win32/Gracing.I](img/03-defender-gracing.png)
+
 Para poder analizar las capas posteriores (el C2 en ejecución), fue necesario crear
 una **exclusión de Defender** que simula un implante que LOGRRO EVADIR EL ANTIVIRUS:
 
@@ -220,7 +222,6 @@ Con la exclusión activa, el implante ejecutó y estableció el canal C2: beacon
 `ACCURATE_EXCHANGE`, transporte http(s), callback desde `192.168.20.10` hacia
 `192.168.10.10:443` con jitter ~60s.
 
-![detección Trojan:Win32/Gracing.I](img/03-defender-gracing.png)
 ![consola Sliver con el beacon activo](img/03-beacon-vivo.png)
 
 ---
