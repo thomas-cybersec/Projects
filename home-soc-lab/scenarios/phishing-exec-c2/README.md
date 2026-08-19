@@ -221,7 +221,7 @@ Con la exclusión activa, el implante ejecutó y estableció el canal C2: beacon
 `192.168.10.10:443` con jitter ~60s.
 
 ![detección Trojan:Win32/Gracing.I](img/03-defender-gracing.png)
-![consola Sliver con el beacon activo](img/03-beacon-vivo.png_)
+![consola Sliver con el beacon activo](img/03-beacon-vivo.png)
 
 ---
 
