@@ -150,8 +150,7 @@ End Sub
 
 El macro lanza un `powershell.exe` visible. Su único propósito es **reproducir el
 árbol de procesos** `winword.exe → powershell.exe`, que a nivel de telemetría de
-endpoint es idéntico al de un macro armado (Sysmon EID 1 y EID 3 observan la misma
-relación de procesos y las mismas conexiones, sea el macro benigno o malicioso).
+endpoint es idéntico al de un macro armado (Sysmon EID 1, sea el macro benigno o malicioso).
 
 ![Código del macro en el editor VBA](img/02-macro-vba.png)
 
@@ -261,7 +260,7 @@ Se desplegó Suricata en pfSense sobre la interfaz REDDMZ en modo IDS (sin bloqu
 para no interrumpir el C2 en observación), con los rulesets ET Open y ABUSE.ch SSL
 Blacklist activados.
 
-Suricata no generó ninguna alerta del C2.** El canal viaja cifrado (HTTPS/TLS).
+Suricata no generó ninguna alerta del C2. El canal viaja cifrado (HTTPS/TLS).
 En un entorno real, la visibilidad se recuperaría con **SSL/TLS Inspection**) 
 mediante un NGFW o proxy de intercepción, con sus trade-offs
 
