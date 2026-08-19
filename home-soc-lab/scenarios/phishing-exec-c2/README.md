@@ -153,7 +153,9 @@ El macro lanza un `powershell.exe` visible. Su único propósito es **reproducir
 endpoint es idéntico al de un macro armado (Sysmon EID 1 y EID 3 observan la misma
 relación de procesos y las mismas conexiones, sea el macro benigno o malicioso).
 
-*[captura: `img/02-macro-vba.png` — código del macro en el editor VBA]*
+![Código del macro en el editor VBA](img/02-macro-vba.png)
+
+*Código del macro en el editor VBA.*
 
 ### Sysmon EID 1 y regla personalizada 100200
 
@@ -174,7 +176,7 @@ pero la regla no fue elevada en wazuh. Por eso se creo la siguiente regla person
 Tras reiniciar el manager y reejecutar el macro, la regla **100200 (nivel 12)** se
 activó correctamente.
 
-*[captura: `img/02-alerta-100200.png` — alerta 100200 en Security Events]*
+![Alerta 100200 en Security Events](img/02-alerta-100200.png)
 
 ---
 
