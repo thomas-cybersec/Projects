@@ -221,8 +221,8 @@ Con la exclusión activa, el implante ejecutó y estableció el canal C2: beacon
 `ACCURATE_EXCHANGE`, transporte http(s), callback desde `192.168.20.10` hacia
 `192.168.10.10:443` con jitter ~60s.
 
-*[captura: `img/03-defender-gracing.png` — detección Trojan:Win32/Gracing.I]*
-*[captura: `img/03-beacon-vivo.png` — consola Sliver con el beacon activo]*
+![detección Trojan:Win32/Gracing.I](img/03-defender-gracing.png)
+![consola Sliver con el beacon activo](img/03-beacon-vivo.png_)
 
 ---
 
@@ -253,7 +253,7 @@ La regla **100201 (nivel 12)** se activó repetidamente —una alerta por cada c
 elevando el evento silenciado a alerta visible con las IPs de origen/destino y mapeo
 T1071.
 
-*[captura: `img/04-alerta-100201.png` — alertas 100201 con cadencia de beacon]*
+![alertas 100201 con cadencia de beacon](img/04-alerta-100201.png)
 
 ### Suricata — El punto ciego del HTTPS
 
@@ -265,7 +265,7 @@ Suricata no generó ninguna alerta del C2.** El canal viaja cifrado (HTTPS/TLS).
 En un entorno real, la visibilidad se recuperaría con **SSL/TLS Inspection**) 
 mediante un NGFW o proxy de intercepción, con sus trade-offs
 
-*[captura: `img/04-suricata-alerts.png` — alertas de Suricata sin el beacon entre ellas]*
+![alertas de Suricata sin el beacon entre ellas](img/04-suricata-alerts.png)
 
 ### El mismo beacon, dos capas
 
