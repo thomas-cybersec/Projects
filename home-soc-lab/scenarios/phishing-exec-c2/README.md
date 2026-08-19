@@ -159,7 +159,7 @@ endpoint es idéntico al de un macro armado (Sysmon EID 1, sea el macro benigno 
 ### Sysmon EID 1 y regla personalizada 100200
 
 La apertura del documento y la habilitación del contenido solamente generaron el evento Sysmon EID 1 esperado,
-pero la regla no fue elevada en wazuh. Por eso se creo la siguiente regla personalizada.
+pero la regla no fue elevada en wazuh. Por eso se creó la siguiente regla personalizada.
 
 
 ```xml
@@ -205,7 +205,7 @@ implante Sliver sin ofuscación adicional fue así detectado por la capa endpoin
 ![detección Trojan:Win32/Gracing.I](img/03-defender-gracing.png)
 
 Para poder analizar las capas posteriores (el C2 en ejecución), fue necesario crear
-una **exclusión de Defender** que simula un implante que LOGRRO EVADIR EL ANTIVIRUS:
+una **exclusión de Defender** que simula un implante que LOGRÓ EVADIR EL ANTIVIRUS:
 
 ```powershell
 Add-MpPreference -ExclusionPath "C:\Users\Public"
@@ -237,7 +237,7 @@ rítmico, no una conexión aislada).
 
 Igual que con el EID 1, **el evento se registró en Sysmon (Windows), pero no apareció
 como alerta en Wazuh nuevamente.** La causa: Wazuh clasifica el EID 3 en **nivel 0 (silenciado)**
-por defecto, y solo lo eleva para casos específicos (RDP y WinRM). Por ese motivo se creo una regla personalizada
+por defecto, y solo lo eleva para casos específicos (RDP y WinRM). Por ese motivo se creó una regla personalizada
 
 ```xml
 <rule id="100201" level="12">
