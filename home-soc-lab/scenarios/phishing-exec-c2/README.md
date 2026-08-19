@@ -69,7 +69,7 @@ Telemetría: WinSrv(20.10) ── 1514/1515 ──> pfSense ──> Wazuh(30.10)
 | Sliver | build `devel` | Framework de Command & Control |
 | Suricata | paquete pfSense | IDS de red |
 
-**Segmentación y política de firewall.** Política base **default deny** entre todas
+**Política de firewall.** Política base **default deny** entre todas
 las zonas; solo se permite lo que tiene sentido para el caso de uso. Reglas efectivas
 en REDDMZ durante la fase C2:
 
@@ -77,10 +77,6 @@ en REDDMZ durante la fase C2:
 |---|---|---|---|---|---|
 | 1 | TCP | 192.168.20.10 | 192.168.30.10 (Wazuh) | 1514–1515 | Telemetría agente → manager |
 | 2 | TCP | 192.168.20.10 | 192.168.10.10 (Kali) | 443 | Ruta del beacon C2 |
-
-Todo lo demás cae en el *deny* implícito. La contención es **estructural** (a nivel de
-hipervisor: cada zona es una Red Interna de VirtualBox), no dependiente de una regla
-que pueda tiparse mal.
 
 ---
 
@@ -96,17 +92,15 @@ mismo host. Además, sin ruta hacia la WAN durante la fase C2, la contención es
 estructural.
 
 **Estado de Defender: actualizado y con versión fijada.** Para que la afirmación "el
-endpoint detecta el implante" sea reproducible y defendible, se actualizó Defender,
-se registró la versión exacta y se tomó un snapshot:
+endpoint detecta el implante" sea reproducible y defendible, se actualizó Defender.
 
 ```
-AMEngineVersion : 1.1.26070.7   |   AMProductVersion : 4.18.26070.9
-AntivirusSignatureVersion : 1.457.96.0   |   Última actualización : 2026-08-10
+AMEngineVersion : 1.1.26070.7   | AMProductVersion : 4.18.26070.9 | AntivirusSignatureVersion : 1.457.96.0  
 ```
 
-### Validación
+### Validación 
 
-**Contención (desde el WinSrv):**
+**Contención de trafico (desde el WinSrv):**
 
 ```powershell
 Test-NetConnection 8.8.8.8 -Port 443
@@ -127,18 +121,12 @@ Test-NetConnection 192.168.10.10 -Port 443
 > eso reporta `False` sin listener aunque el firewall permita el tráfico. Es decir,
 > valida **conectividad de sesión**, no solo que la regla de firewall exista.
 
-**Telemetría (end-to-end).** Un intento de autenticación fallido en el WinSrv generó
-el evento Windows 4625, propagado por el agente hasta el dashboard como alerta
-`Rule 60122 (nivel 5)`, mapeada a T1078. Confirmó la cadena endpoint → agente →
-manager → dashboard.
 
 ### Preparación de Defender
 
 La actualización de firmas exigió salida temporal a Internet. Como el WinSrv está en
 default-deny, se abrió de forma temporal la salida (DNS + HTTPS) para actualizar
 Defender y se **cerró inmediatamente después**, revalidando la contención
-(`Test-NetConnection microsoft.com -Port 443 → False`) antes de tomar el snapshot de
-línea base `pre-C2-phishing-baseline-2026-08-10`.
 
 ---
 
@@ -160,8 +148,7 @@ Private Sub Document_Open()
 End Sub
 ```
 
-El macro **no descarga ni ejecuta ningún payload**: lanza un `powershell.exe` visible
-que escribe un archivo marcador con timestamp. Su único propósito es **reproducir el
+El macro lanza un `powershell.exe` visible. Su único propósito es **reproducir el
 árbol de procesos** `winword.exe → powershell.exe`, que a nivel de telemetría de
 endpoint es idéntico al de un macro armado (Sysmon EID 1 y EID 3 observan la misma
 relación de procesos y las mismas conexiones, sea el macro benigno o malicioso).
@@ -170,19 +157,9 @@ relación de procesos y las mismas conexiones, sea el macro benigno o malicioso)
 
 ### Sysmon EID 1 y regla personalizada 100200
 
-La apertura del documento y la habilitación del contenido (la acción del usuario en
-T1204.002) generaron el evento Sysmon EID 1 esperado, con la dupla que constituye la
-firma del ataque:
+La apertura del documento y la habilitación del contenido solamente generaron el evento Sysmon EID 1 esperado,
+pero la regla no fue elevada en wazuh. Por eso se creo la siguiente regla personalizada.
 
-```
-Image:        ...\powershell.exe
-ParentImage:  ...\Office16\WINWORD.EXE   ← Word no tiene razón legítima para lanzar PowerShell
-CommandLine:  powershell.exe -NoExit -Command "Write-Host 'LAB DEMO...
-```
-
-**El evento se generó correctamente en Sysmon (endpoint), pero el ruleset base de
-Wazuh no lo elevó a alerta** — no existe regla que considere sospechoso que Office
-lance PowerShell. Por ese motivo se escribió una regla personalizada:
 
 ```xml
 <rule id="100200" level="12">
@@ -198,12 +175,6 @@ Tras reiniciar el manager y reejecutar el macro, la regla **100200 (nivel 12)** 
 activó correctamente.
 
 *[captura: `img/02-alerta-100200.png` — alerta 100200 en Security Events]*
-
-> **Nota — falso positivo (Rule 92213).** El ruleset base sí elevó, con **nivel 15**,
-> un archivo temporal benigno de PowerShell (`__PSScriptPolicyTest_*.ps1`). Contraste
-> revelador: gritó nivel 15 por algo inofensivo, mientras el evento realmente
-> peligroso no generaba alerta hasta escribir la 100200. Conclusión: **el nivel de
-> una alerta no equivale a su severidad real.**
 
 ---
 
@@ -231,7 +202,7 @@ implante Sliver sin ofuscación adicional fue así detectado por la capa endpoin
 **antes de ejecutarse**, con la versión de firmas fijada en la Fase 1.
 
 Para poder analizar las capas posteriores (el C2 en ejecución), fue necesario crear
-una **exclusión de Defender** que simula un implante que logró evadir el antivirus:
+una **exclusión de Defender** que simula un implante que LOGRRO EVADIR EL ANTIVIRUS:
 
 ```powershell
 Add-MpPreference -ExclusionPath "C:\Users\Public"
@@ -263,10 +234,8 @@ regular con jitter (~60–75 s)**, la firma temporal característica de un C2 (u
 rítmico, no una conexión aislada).
 
 Igual que con el EID 1, **el evento se registró en Sysmon (Windows), pero no apareció
-como alerta en Wazuh.** La causa: Wazuh clasifica el EID 3 en **nivel 0 (silenciado)**
-por defecto, y solo lo eleva para casos específicos (RDP y WinRM). El C2 saliente
-genérico hacia el 443 no estaba cubierto. Por ese motivo se escribió la regla
-personalizada:
+como alerta en Wazuh nuevamente.** La causa: Wazuh clasifica el EID 3 en **nivel 0 (silenciado)**
+por defecto, y solo lo eleva para casos específicos (RDP y WinRM). Por ese motivo se creo una regla personalizada
 
 ```xml
 <rule id="100201" level="12">
@@ -290,17 +259,9 @@ Se desplegó Suricata en pfSense sobre la interfaz REDDMZ en modo IDS (sin bloqu
 para no interrumpir el C2 en observación), con los rulesets ET Open y ABUSE.ch SSL
 Blacklist activados.
 
-**Con el beacon latiendo durante varios minutos, Suricata no generó ninguna alerta
-del C2.** El canal viaja cifrado (HTTPS/TLS) y Suricata, como IDS pasivo sin
-descifrado TLS, no puede inspeccionar el contenido; por lo tanto ninguna firma de
-payload coincide y el beacon pasa invisible. Este es el resultado esperado y su valor
-es central: demuestra la limitación de la detección de red frente a C2 cifrado.
-
-En un entorno real, la visibilidad se recuperaría con **SSL/TLS Inspection**
-(*break-and-inspect*) mediante un NGFW o proxy de intercepción, con sus trade-offs
-(privacidad, rendimiento, la CA de intercepción como punto único de fallo, evasión por
-*certificate pinning*). Por eso la capa endpoint (Sysmon EID 3 + regla 100201) sigue
-siendo crítica.
+Suricata no generó ninguna alerta del C2.** El canal viaja cifrado (HTTPS/TLS). Por eso
+mismo, en un entorno real, al visibilidad se recuperaría con **SSL/TLS Inspection**) 
+mediante un NGFW o proxy de intercepción, con sus trade-offs
 
 *[captura: `img/04-suricata-alerts.png` — alertas de Suricata sin el beacon entre ellas]*
 
@@ -313,25 +274,6 @@ siendo crítica.
 
 Este contraste es la justificación de la defensa en profundidad: un SOC con solo IDS
 de red estaría ciego a este C2; la capa endpoint sostiene la detección.
-
----
-
-## Hallazgos operativos: deriva de reloj en VirtualBox
-
-Failure mode recurrente que afectó tanto la actualización de Defender (fallo TLS
-`0x80072F8F`) como el establecimiento del beacon (validación del certificado del C2).
-VirtualBox, vía Guest Additions, impone la hora del host al guest y entra en conflicto
-con el reloj de Windows; un reloj desfasado invalida la ventana de validez de los
-certificados TLS. Síntoma característico: proceso vivo y ruta de red correcta, pero sin
-conexión establecida. Remediación (VM apagada):
-
-```
-VBoxManage setextradata "winServer2025" \
-  "VBoxInternal/Devices/VMMDev/0/Config/GetHostTimeDisabled" 1
-```
-
-y `w32tm /resync /force` dentro del guest, verificando que los relojes de todas las VMs
-coincidan antes de generar tráfico dependiente de TLS.
 
 ---
 
@@ -393,16 +335,6 @@ Mapeo de la cadena completa, ordenado según la secuencia del ataque:
 | 100200 | 12 | sysmon_event1 | parentImage=winword.exe AND image=powershell.exe | T1204.002, T1059.001 |
 | 100201 | 12 | sysmon_event3 | image=implante2.exe AND destinationPort=443 | T1071 |
 
-**Artefactos de detección**
-
-| Artefacto | Valor |
-|---|---|
-| Firma Defender del implante | `Trojan:Win32/Gracing.I` (severidad 5) |
-| Versión de firmas (fijada) | engine 1.1.26070.7 / sig 1.457.96.0 (2026-08-10) |
-| Regla Wazuh del drop | 92207 (nivel 12) — T1105 |
-| Falso positivo documentado | 92213 (nivel 15) — `.ps1` temporal de PowerShell |
-| Beacon | `ACCURATE_EXCHANGE`, http(s), jitter ~60s |
-| Rulesets Suricata | ET Open + ABUSE.ch SSL Blacklist |
 
 ---
 
