@@ -337,7 +337,35 @@ Mapeo de la cadena completa, ordenado según la secuencia del ataque:
 | 100200 | 12 | sysmon_event1 | parentImage=winword.exe AND image=powershell.exe | T1204.002, T1059.001 |
 | 100201 | 12 | sysmon_event3 | image=implante2.exe AND destinationPort=443 | T1071 |
 
+Fase final SOC
+Mitigación — cómo contrarrestar este ataque en producción
 
+El laboratorio se configuró deliberadamente con condiciones favorables al atacante (macros habilitadas, exclusión de Defender, sin filtrado de correo) para poder observar la cadena de detección completa. En un entorno productivo, varios de estos controles habrían frenado o detectado el ataque mucho antes de llegar al C2. La defensa se organiza por etapa de la cadena.
+
+1. Delivery — bloquear el vector de entrada
+
+El control más efectivo es evitar que el documento llegue y se ejecute:
+
+Filtrado de correo y sandboxing. Un gateway de correo (Defender for Office 365, Proofpoint, etc.) detona los adjuntos en sandbox antes de la entrega, bloqueando el .docm malicioso antes de que el usuario lo vea.
+Mark of the Web (MOTW) y Protected View. Los documentos descargados de Internet o recibidos por mail se abren en Vista Protegida y con macros bloqueadas por defecto. Microsoft bloquea macros VBA en archivos con MOTW desde 2022 — esto por sí solo frena la mayoría de los .docm que llegan por correo.
+Concientización del usuario. El eslabón T1204.002 depende de que la víctima habilite el contenido. La capacitación anti-phishing reduce la tasa de clicks.
+
+2. Ejecución — impedir que el macro corra
+
+Si el documento igual llega, se corta la ejecución:
+
+Deshabilitar macros por GPO. "Block macros from running in Office files from the Internet" (User Configuration → Administrative Templates → Microsoft Word → Macro Settings). Es el control más directo contra este escenario.
+Attack Surface Reduction (ASR). Las reglas ASR de Defender bloquean específicamente que las aplicaciones de Office creen procesos hijos ("Block all Office applications from creating child processes"). Esta regla habría cortado el winword → powershell en origen, antes de generar siquiera el árbol de procesos.
+Constrained Language Mode + AMSI. Limitan lo que PowerShell puede ejecutar y fuerzan que el contenido des-ofuscado pase por Defender en memoria antes de correr.
+
+3. Command & Control — cortar el canal
+
+Si el implante llega a ejecutarse, se ataca el C2:
+
+No permitir salida directa a Internet desde endpoints. Todo el tráfico saliente debería pasar por un proxy que autentique, registre y filtre por reputación de destino. Un beacon hacia una IP o dominio desconocido se bloquea o alerta.
+Filtrado de egress por firewall. Reglas de salida restrictivas (default-deny también hacia afuera) impiden que un host comprometido alcance un C2 arbitrario. En el laboratorio, la contención estructural cumplió este rol.
+SSL/TLS Inspection (break-and-inspect). Resuelve el punto ciego documentado en la Fase 4: descifra el tráfico en el perímetro para que el IDS pueda inspeccionar el payload del beacon, con los trade-offs ya mencionados (privacidad, rendimiento, certificate pinning).
+Exclusiones de AV mínimas y auditadas. La exclusión de C:\Users\Public usada en el lab (de forma artificial y documentada) es exactamente el tipo de configuración que un atacante busca. En producción, las exclusiones deben ser mínimas, justificadas y auditadas.
 ---
 
 *Escenario documentado con fines de portfolio y práctica defensiva. Todo el trabajo se
