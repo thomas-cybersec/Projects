@@ -4,7 +4,7 @@
 > **Delivery → Execution → Command & Control**, desde la perspectiva del SOC:
 > qué detecta el SIEM, qué se le escapa y cómo se cierra cada brecha.
 
-[El escenario de laboratorio se encuentra aqui](../../../home-soc-lab/)
+[Ver la arquitectura del laboratorio](../../../home-soc-lab/)
 ---
 
 ## Resumen ejecutivo
