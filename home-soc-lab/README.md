@@ -19,39 +19,34 @@ Laboratorio personal de detección montado en VirtualBox. La idea fue construir 
 ### Esquema de IPs
 
 
+
 ## Arquitectura del laboratorio
-                  ```
- 
-                                              Internet (router doméstico)
-                                                         │
-                                                ┌────────┴────────┐
-                                                │     pfSense     │  Firewall + NAT + Suricata IDS
-                                                │  Default deny   │
-                                                └────────┬────────┘
-                                ┌───────────────────────┼───────────────────────┐
-                           REDKALI                  REDDMZ (em)             REDMGMT
-                         192.168.10.1              192.168.20.1             192.168.30.1
-                                │                       │                       │
-                       ┌────────┴─────────┐   ┌─────────┴──────────┐  ┌─────────┴─────────┐
-                       │  Kali Linux      │   │ Windows Server 2025│  │ Wazuh 4.7.5       │
-                       │  192.168.10.10   │   │ 192.168.20.10      │  │ 192.168.30.10     │
-                       │  (Atacante)      │   │ (Víctima/SV-WEB-01)│  │ (SIEM / MGMT)     │
-                       │  Sliver C2       │   │ Sysmon + Ag. Wazuh │  │ Ubuntu 22.04      │
-                       └──────────────────┘   │ Defender / AMSI    │  └───────────────────┘
-                         Red interna "ATK"     └────────────────────┘   Red interna "MGMT"
-                                                Red interna "DMZ
-    Beaconing:  WinSrv(20.10) ── HTTPS/443 ──> pfSense ──>Kali(10.10) [cruza pfSense → visible para Suricata] 
-    Telemetría: WinSrv(20.10) ── 1514/1515 ──> pfSense ──> Wazuh(30.10)   
+
+```
+                        Internet (router doméstico)
+                                   │
+                          ┌────────┴────────┐
+                          │     pfSense     │  Firewall + NAT + Suricata IDS
+                          │  Default deny   │
+                          └────────┬────────┘
+          ┌───────────────────────┼───────────────────────┐
+     REDKALI                  REDDMZ (em2)             REDMGMT
+   192.168.10.1              192.168.20.1             192.168.30.1
+          │                       │                       │
+ ┌────────┴─────────┐   ┌─────────┴──────────┐  ┌─────────┴─────────┐
+ │  Kali Linux      │   │ Windows Server 2025│  │ Wazuh 4.7.5       │
+ │  192.168.10.10   │   │ 192.168.20.10      │  │ 192.168.30.10     │
+ │  (Atacante)      │   │ (Víctima/SV-WEB-01)│  │ (SIEM / MGMT)     │
+ │  Sliver C2       │   │ Sysmon + Ag. Wazuh │  │ Ubuntu 22.04      │
+ └──────────────────┘   │ Defender / AMSI    │  └───────────────────┘
+   Red interna "ATK"     └────────────────────┘   Red interna "MGMT"
+                          Red interna "DMZ"
+
+Beaconing:  WinSrv(20.10) ── HTTPS/443 ──> pfSense ──> Kali(10.10)   [cruza pfSense → visible para Suricata]
+Telemetría: WinSrv(20.10) ── 1514/1515 ──> pfSense ──> Wazuh(30.10)
+```
 
 
-
---
-
-| Zona | CIDR | Host | IP |
-|---|---|---|---|
-| ATK | 192.168.10.0/24 | Kali | .10 |
-| DMZ | 192.168.20.0/24 | Windows Server | .10 |
-| MGMT | 192.168.30.0/24 | Wazuh | .10 |
 
 ### Tráfico permitido entre zonas
 
