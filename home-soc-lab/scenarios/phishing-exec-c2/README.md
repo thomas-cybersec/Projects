@@ -29,7 +29,7 @@ de correo, filtro de mail ni usuario víctima real. La etapa de *delivery* está
 **simulada**: se asume una entrega exitosa y el foco es la detección
 **post-ejecución**. La descripción precisa es "simulación post-delivery → ejecución →
 C2 → detección".
-
+[El escenario de laboratorio se encuentra aqui](../../../home-soc-lab/)
 ---
 
 
