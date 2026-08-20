@@ -1,6 +1,6 @@
 # Wazuh Windows Telemetry Tuning — cierre de gaps de visibilidad
 
-Tres puntos ciegos de detección identificados en el [escenario de post-explotación vía WinRM](../../scenarios/winrm-post-exploitation/) resultaron no ser errores de configuración, sino **decisiones conservadoras de la instalación por defecto** de Wazuh y SwiftOnSecurity, que priorizan estabilidad inicial sobre profundidad de telemetría. Este documento resume qué se cambió en cada caso, el código escrito para cerrarlos, y las limitaciones técnicas —no evidentes— que aparecieron durante el proceso.
+Tres puntos ciegos de detección identificados en el [escenario de post-explotación vía WinRM](../../scenarios/winrm-post-exploitation/) resultaron no ser errores de configuración, sino **decisiones conservadoras de la instalación por defecto** de Wazuh y SwiftOnSecurity, que priorizan estabilidad inicial sobre profundidad de telemetría. Este documento resume qué se cambió en cada caso, el código escrito para cerrarlos, y las limitaciones técnicas —no evidentes— que aparecieron durante el proceso. El formato del laboratorio corresponde a [escenario de laboratorio](../../../home-soc-lab/)
 
 ## El problema de fondo
 
