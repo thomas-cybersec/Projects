@@ -4,22 +4,9 @@ Documentación de los escenarios de ataque ejecutados desde la zona ATK (Kali Li
 
 **Objetivo:** validar la cadena de detección end-to-end del laboratorio, identificar gaps de visibilidad y demostrar análisis de incidentes en un entorno controlado.
 
+[Ver la arquitectura del laboratorio](../../../home-soc-lab/)
 ---
 
-## Topología 
-
-```
-   Kali (ATK)              Windows Server (DMZ)         Wazuh (MGMT)
-  192.168.10.10  ────►       192.168.20.10        ──►   192.168.30.10
-                        (Sysmon + agente Wazuh)         (SIEM)
-```
-
-Reglas de firewall relevantes:
-- ATK → DMZ permitido en 80, 443, 3389.
-- DMZ → MGMT permitido en 1514, 1515 (telemetría agente).
-- ATK → MGMT bloqueado (el atacante no puede ver el SIEM).
-
----
 
 ## Brute Force RDP desde Kali
 
