@@ -20,7 +20,7 @@ Laboratorio personal de detección montado en VirtualBox. La idea fue construir 
 
 
 ## Arquitectura del laboratorio
-
+                  ```
  
                                               Internet (router doméstico)
                                                          │
@@ -39,11 +39,11 @@ Laboratorio personal de detección montado en VirtualBox. La idea fue construir 
                        │  Sliver C2       │   │ Sysmon + Ag. Wazuh │  │ Ubuntu 22.04      │
                        └──────────────────┘   │ Defender / AMSI    │  └───────────────────┘
                          Red interna "ATK"     └────────────────────┘   Red interna "MGMT"
-                                                Red interna "DMZ"
-                      
-Beaconing:  WinSrv(20.10) ── HTTPS/443 ──> pfSense ──>Kali(10.10) [cruza pfSense → visible para Suricata]
-Telemetría: WinSrv(20.10) ── 1514/1515 ──> pfSense ──> Wazuh(30.10)
-                      ```
+                                                Red interna "DMZ
+    Beaconing:  WinSrv(20.10) ── HTTPS/443 ──> pfSense ──>Kali(10.10) [cruza pfSense → visible para Suricata] 
+    Telemetría: WinSrv(20.10) ── 1514/1515 ──> pfSense ──> Wazuh(30.10)   
+
+
 
 --
 
