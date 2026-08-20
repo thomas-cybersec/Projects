@@ -21,7 +21,7 @@ Laboratorio personal de detección montado en VirtualBox. La idea fue construir 
 
 ## Arquitectura del laboratorio
 
-```
+ 
                                               Internet (router doméstico)
                                                          │
                                                 ┌────────┴────────┐
@@ -45,7 +45,7 @@ Beaconing:  WinSrv(20.10) ── HTTPS/443 ──> pfSense ──>Kali(10.10) [c
 Telemetría: WinSrv(20.10) ── 1514/1515 ──> pfSense ──> Wazuh(30.10)
                       ```
 
-
+--
 
 | Zona | CIDR | Host | IP |
 |---|---|---|---|
