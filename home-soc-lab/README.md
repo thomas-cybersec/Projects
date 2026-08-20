@@ -41,8 +41,9 @@ Laboratorio personal de detección montado en VirtualBox. La idea fue construir 
    Red interna "ATK"     └────────────────────┘   Red interna "MGMT"
                           Red interna "DMZ"
 
-Beaconing:  WinSrv(20.10) ── HTTPS/443 ──> pfSense ──> Kali(10.10) [cruza pfSense → visible para Suricata]
-              Telemetría: WinSrv(20.10) ── 1514/1515 ──> pfSense ──> Wazuh(30.10)
+Beaconing:  WinSrv(20.10) ── HTTPS/443 ──> pfSense ──>
+Kali(10.10) [cruza pfSense → visible para Suricata]
+Telemetría: WinSrv(20.10) ── 1514/1515 ──> pfSense ──> Wazuh(30.10)
 ```
 
 
