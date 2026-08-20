@@ -7,7 +7,7 @@ resultaron no ser errores de configuración, sino decisiones conservadoras de la
 que priorizan estabilidad inicial sobre profundidad de telemetría. Este documento resume qué se cambió en cada caso, el código escrito para cerrarlos, 
 y las limitaciones técnicas —no evidentes— que aparecieron durante el proceso.
 
-[Ver la arquitectura del laboratorio](https://github.com/thomas-cybersec/Projects/tree/main/home-soc-lab)
+Los cambios de este documento se aplican sobre el stack de Wazuh y los endpoints Windows definidos en la [arquitectura del laboratorio](https://github.com/thomas-cybersec/Projects/tree/main/home-soc-lab).
 
 ## El problema de fondo
 
