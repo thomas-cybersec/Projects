@@ -3,7 +3,7 @@
 > Laboratorio defensivo que documenta de punta a punta una cadena de infección
 > **Delivery → Execution → Command & Control**, desde la perspectiva del SOC:
 > qué detecta el SIEM, qué se le escapa y cómo se cierra cada brecha.
-
+[El escenario de laboratorio se encuentra aqui](../../../home-soc-lab/)
 ---
 
 ## Resumen ejecutivo
@@ -29,7 +29,7 @@ de correo, filtro de mail ni usuario víctima real. La etapa de *delivery* está
 **simulada**: se asume una entrega exitosa y el foco es la detección
 **post-ejecución**. La descripción precisa es "simulación post-delivery → ejecución →
 C2 → detección".
-[El escenario de laboratorio se encuentra aqui](../../../home-soc-lab/)
+
 ---
 
 
