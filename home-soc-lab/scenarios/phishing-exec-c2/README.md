@@ -1,11 +1,12 @@
 # Cadena de Infección: Phishing → Ejecución → C2 — Análisis Blue Team
 
-> Laboratorio defensivo que documenta de punta a punta una cadena de infección Delivery → Execution → Command & Control,
-> desde la perspectiva del SOC: qué detecta el SIEM, qué se le escapa y cómo se cierra cada brecha.
+> Cadena Delivery → Execution → Command & Control documentada de punta a punta, desde la perspectiva del SOC: qué detecta el SIEM, qué se le escapa y cómo se cierra cada brecha.
 
-Para entender por qué el beacon cruzó pfSense sin que Suricata lo detectara, ver [cómo está segmentada la red y dónde inspecciona el IDS](https://github.com/thomas-cybersec/Projects/tree/main/home-soc-lab).
+Este escenario reproduce, en un entorno controlado y segmentado, la cadena de infección más frecuente que investiga un analista SOC: un documento de Office con macro que ejecuta un proceso hijo, que a su vez establece un canal de C2 hacia la infraestructura del atacante. El hallazgo central: el beacon fue detectado en la capa de endpoint (Sysmon + regla Wazuh) pero resultó invisible para el IDS de red (Suricata) por ir cifrado sobre HTTPS —una demostración empírica de por qué la detección de C2 exige defensa en profundidad y no puede depender solo de firmas de red.
+
+Para ver por qué el beacon cruzó pfSense sin que Suricata lo detectara, revisá [cómo está segmentada la red y dónde inspecciona el IDS](https://github.com/thomas-cybersec/Projects/tree/main/home-soc-lab).
+
 ---
-
 ## Resumen ejecutivo
 
 Este escenario reproduce, en un entorno controlado y segmentado, la cadena de
