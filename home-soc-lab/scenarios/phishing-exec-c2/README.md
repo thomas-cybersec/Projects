@@ -32,42 +32,7 @@ C2 → detección".
 
 ---
 
-## Arquitectura del laboratorio
 
-```
-                        Internet (router doméstico)
-                                   │
-                          ┌────────┴────────┐
-                          │     pfSense     │  Firewall + NAT + Suricata IDS
-                          │  Default deny   │
-                          └────────┬────────┘
-          ┌───────────────────────┼───────────────────────┐
-     REDKALI                  REDDMZ (em)             REDMGMT
-   192.168.10.1              192.168.20.1             192.168.30.1
-          │                       │                       │
- ┌────────┴─────────┐   ┌─────────┴──────────┐  ┌─────────┴─────────┐
- │  Kali Linux      │   │ Windows Server 2025│  │ Wazuh 4.7.5       │
- │  192.168.10.10   │   │ 192.168.20.10      │  │ 192.168.30.10     │
- │  (Atacante)      │   │ (Víctima/SV-WEB-01)│  │ (SIEM / MGMT)     │
- │  Sliver C2       │   │ Sysmon + Ag. Wazuh │  │ Ubuntu 22.04      │
- └──────────────────┘   │ Defender / AMSI    │  └───────────────────┘
-   Red interna "ATK"     └────────────────────┘   Red interna "MGMT"
-                          Red interna "DMZ"
-
-Beaconing:  WinSrv(20.10) ── HTTPS/443 ──> pfSense ──> Kali(10.10)   [cruza pfSense → visible para Suricata]
-Telemetría: WinSrv(20.10) ── 1514/1515 ──> pfSense ──> Wazuh(30.10)
-```
-
-| Componente | Versión | Rol |
-|---|---|---|
-| pfSense | 2.7.2 | Firewall, NAT, segmentación, host de Suricata |
-| Wazuh | 4.7.5 (All-in-One) | SIEM (Indexer + Manager + Dashboard) |
-| Ubuntu Server | 22.04 LTS | Base del SIEM |
-| Windows Server | 2025 | Endpoint víctima (`SV-WEB-01`) |
-| Sysmon | 15.x + config SwiftOnSecurity | Telemetría de endpoint |
-| Kali Linux | 2024.x | Máquina atacante |
-| Sliver | build `devel` | Framework de Command & Control |
-| Suricata | paquete pfSense | IDS de red |
 
 **Política de firewall.** Política base **default deny** entre todas
 las zonas; solo se permite lo que tiene sentido para el caso de uso. Reglas efectivas
