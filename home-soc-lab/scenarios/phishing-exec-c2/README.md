@@ -3,7 +3,8 @@
 > Laboratorio defensivo que documenta de punta a punta una cadena de infección
 > **Delivery → Execution → Command & Control**, desde la perspectiva del SOC:
 > qué detecta el SIEM, qué se le escapa y cómo se cierra cada brecha.
-[El escenario de laboratorio se encuentra aqui](../../../home-soc-lab/)
+
+**[El escenario de laboratorio se encuentra aqui](../../../home-soc-lab/)
 ---
 
 ## Resumen ejecutivo
