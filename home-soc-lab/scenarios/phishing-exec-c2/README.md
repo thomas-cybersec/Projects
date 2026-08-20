@@ -3,7 +3,7 @@
 > Laboratorio defensivo que documenta de punta a punta una cadena de infección Delivery → Execution → Command & Control,
 > desde la perspectiva del SOC: qué detecta el SIEM, qué se le escapa y cómo se cierra cada brecha.
 
-[Ver la arquitectura del laboratorio](https://github.com/thomas-cybersec/Projects/tree/main/home-soc-lab)
+Para entender por qué el beacon cruzó pfSense sin que Suricata lo detectara, ver [cómo está segmentada la red y dónde inspecciona el IDS](https://github.com/thomas-cybersec/Projects/tree/main/home-soc-lab).
 ---
 
 ## Resumen ejecutivo
