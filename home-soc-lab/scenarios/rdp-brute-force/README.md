@@ -1,10 +1,11 @@
-# Escenario de Ataque — Home SOC Lab
+# Brute Force RDP → Acceso Inicial — Análisis de Detección
 
-Documentación de los escenarios de ataque ejecutados desde la zona ATK (Kali Linux) contra el endpoint en DMZ (Windows Server 2025) y su análisis desde el SIEM (Wazuh) en la zona MGMT.
+> Fuerza bruta contra RDP desde Kali, detectada por Wazuh: qué reglas disparan solas y qué gap de correlación queda abierto.
 
-**Objetivo:** validar la cadena de detección end-to-end del laboratorio, identificar gaps de visibilidad y demostrar análisis de incidentes en un entorno controlado.
+Ataque de fuerza bruta contra el servicio RDP del Windows Server usando Hydra con una wordlist controlada, ejecutado desde la zona ATK (Kali Linux) contra el endpoint en DMZ y analizado desde el SIEM (Wazuh) en la zona MGMT. Wazuh detectó tanto el patrón de brute force como el logon exitoso posterior y los mapeó a MITRE ATT&CK; el análisis también expone un gap secundario: la correlación automática entre *brute force + logon exitoso del mismo usuario* no existe en las reglas default y requiere una regla custom.
 
-[Ver la arquitectura del laboratorio](../../../home-soc-lab/)
+Este ataque recorre las zonas del laboratorio de ATK a DMZ; la [arquitectura y las reglas de firewall que lo permiten](https://github.com/thomas-cybersec/Projects/tree/main/home-soc-lab) están documentadas en la base.
+
 ---
 
 
